@@ -70,10 +70,70 @@ function moduleProject2() {
 
   document.addEventListener('keydown', evt => {
     // 👉 TASK 3 - Use the arrow keys to highlight a new square 👈
+    let currentSquare = document.querySelector('.targeted');
+    let currentRow = currentSquare.parentElement;
+    let squareIndex = Array.from(currentRow.children).indexOf(currentSquare);
+
+    switch (evt.key) {
+      case keys.up:
+        if (currentRow.previousElementSibling) {
+          let aboveRow = currentRow.previousElementSibling;
+          let newSquare = aboveRow.children[squareIndex];
+          updateTarget(currentSquare, newSquare);
+        }
+        break;
+
+      case keys.down:
+        if (currentRow.nextElementSibling) {
+          let belowRow = currentRow.nextElementSibling;
+          let newSquare = belowRow.children[squareIndex];
+          updateTarget(currentSquare, newSquare);
+        }
+        break;
+
+      case keys.left:
+        if (currentSquare.previousElementSibling) {
+          let newSquare = currentSquare.previousElementSibling;
+          updateTarget(currentSquare, newSquare);
+        }
+        break;  
+        
+      case keys.right:
+        if (currentSquare.nextElementSibling) {
+          let newSquare = currentSquare.nextElementSibling;
+          updateTarget(currentSquare, newSquare);
+        }
+        break;
+    }
+
+    function updateTarget (currentSquare, newSquare) {
+      currentSquare.classList.remove('targeted');
+      newSquare.classList.add('targeted');
+    }
 
     // 👉 TASK 4 - Use the space bar to exterminate a mosquito 👈
+    if (evt.key === keys.space) {
+      let mosquito = currentSquare.querySelector('img');
+      if (mosquito && mosquito.dataset.status === 'alive') {
+        mosquito.dataset.status = 'dead';
+        mosquito.parentElement.style.backgroundColor = 'red';
+      }
+    }
 
     // 👉 TASK 5 - End the game 👈
+    let liveMosquitos = document.querySelectorAll("[data-status = 'alive']")
+    if (!liveMosquitos.length) {
+      let elapsed = getTimeElapsed ();
+      document.querySelector('p.info').textContent = `Extermination completed in ${elapsed / 1000} seconds!`
+
+      let restartBtn = document.createElement('button');
+      restartBtn.textContent = 'Restart Game';
+      restartBtn.addEventListener('click', (evt) => {
+        location.reload()
+      })
+      document.querySelector('h2').appendChild(restartBtn);
+    }
+
   })
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
